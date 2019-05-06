@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><!-- End Required meta tags -->
     <!-- Begin SEO tag -->
-    <title> Sign Up | Looper - Bootstrap 4 Admin Theme </title>
+    <title> Sign Up | Patrones Hermosos </title>
     <meta property="og:title" content="Sign Up">
     <meta name="author" content="Beni Arisandi">
     <meta property="og:locale" content="en_US">
@@ -57,7 +57,7 @@
         <h1>
           <img src="assets/images/brand-inverse.png" alt="" height="72"> <span class="sr-only">Sign Up</span>
         </h1>
-        <p> Already have an account? please <a href="auth-signin-v1.html">Sign In</a>
+        <p> ¿Ya tienes una cuenta? <a href="login.php">Sign In</a>
         </p>
       </header><!-- form -->
       <form class="auth-form">
@@ -70,13 +70,13 @@
         <!-- .form-group -->
         <div class="form-group">
           <div class="form-label-group">
-            <input type="text" id="inputUser" class="form-control" placeholder="Username" required=""> <label for="inputUser">Username</label>
+            <input type="text" id="inputUser" class="form-control" placeholder="Username" required=""> <label for="inputUser">Usuario</label>
           </div>
         </div><!-- /.form-group -->
         <!-- .form-group -->
         <div class="form-group">
           <div class="form-label-group">
-            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required=""> <label for="inputPassword">Password</label>
+            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required=""> <label for="inputPassword">Contraseña</label>
           </div>
         </div><!-- /.form-group -->
         <!-- .form-group -->
@@ -84,16 +84,16 @@
           <button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button>
         </div><!-- /.form-group -->
         <!-- .form-group -->
-        <div class="form-group text-center">
+        <!-- <div class="form-group text-center">
           <div class="custom-control custom-control-inline custom-checkbox">
             <input type="checkbox" class="custom-control-input" id="newsletter"> <label class="custom-control-label" for="newsletter">Sign me up for the newsletter</label>
           </div>
-        </div><!-- /.form-group -->
+        </div> -->
         <!-- recovery links -->
-        <p class="text-center text-muted mb-0"> By creating an account you agree to the <a href="#!">Terms of Use</a> and <a href="#!">Privacy Policy</a>. </p><!-- /recovery links -->
+        <p class="text-center text-muted mb-0"> Al crear una cuenta aceptas los <a href="#!">Terminos de Servicio</a> y las <a href="#!">Políticas de Privacidad</a>. </p><!-- /recovery links -->
       </form><!-- /.auth-form -->
       <!-- copyright -->
-      <footer class="auth-footer"> © 2018 All Rights Reserved. </footer>
+      <footer class="auth-footer"> © 2019 All Rights Reserved. </footer>
     </main><!-- /.auth -->
     <!-- BEGIN BASE JS -->
     <script src="assets/vendor/jquery/jquery.min.js"></script>
