@@ -1,3 +1,25 @@
+<?php
+    //Incluir clase usuario
+    include("php/class_usuario.php");
+    //Ver si tenemos datos POST para crear la cuenta
+    $datosPOST=array("username","nombre","apellido","mail","telefono","password","telefonoPadres","direccion","fechaNacimiento","rango");
+    $registrar=true;
+    $usuarioRegistradoConExito=false;
+    //iterar por los datos post para ver que tengamos todos
+    for($i=0; $i<sizeof($datosPOST); $i++){
+        if(!isset($_POST[$datosPOST[$i]])){
+            echo "Sin " . $datosPOST[$i];
+            $registrar=false;}
+    }
+    //COntinuar con el registro si tenemos datos POST
+    if($registrar){
+        //Creamos un nuevo objeto de la clase Usuario para mandarla a la base de datos
+        $newUser = new Usuario($_POST["username"],$_POST["nombre"],$_POST["apellido"],$_POST["mail"],$_POST["telefono"],$_POST["password"],$_POST["telefonoPadres"],$_POST["direccion"],$_POST["fechaNacimiento"],$_POST["rango"]);
+        //mandamos los datos a la base de datos para registrarlo
+        $newUser->writeUserToDb();
+        $usuarioRegistradoConExito=true;
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -35,7 +57,11 @@
     <meta name="theme-color" content="#3063A0"><!-- Google font -->
     <link href="https://fonts.googleapis.com/css?family=Fira+Sans:400,500,600" rel="stylesheet"><!-- End Google font -->
     <!-- BEGIN PLUGINS STYLES -->
-    <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.css"><!-- END PLUGINS STYLES -->
+    <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.css">
+    <link rel="stylesheet" href="assets/vendor/flatpickr/flatpickr.min.css">
+    <link rel="stylesheet" href="assets/vendor/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css">
+    <link rel="stylesheet" href="assets/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css">
+    <link rel="stylesheet" href="assets/vendor/nouislider/nouislider.min.css"><!-- END PLUGINS STYLES -->
     <!-- BEGIN THEME STYLES -->
     <link rel="stylesheet" href="assets/stylesheets/theme.min.css" data-skin="default">
     <link rel="stylesheet" href="assets/stylesheets/theme-dark.min.css" data-skin="dark">
@@ -60,24 +86,72 @@
         <p> ¿Ya tienes una cuenta? <a href="login.php">Sign In</a>
         </p>
       </header><!-- form -->
-      <form class="auth-form">
+      <form class="auth-form" action="register.php" method="post">
+        <?php
+            //Ver si se registro con exito y desplegar el mensaje
+            if($usuarioRegistradoConExito){
+                echo '<div class="alert alert-success" role="alert">Usuario registrado con exito!</div>';
+            }
+        ?>
         <!-- .form-group -->
         <div class="form-group">
           <div class="form-label-group">
-            <input type="email" id="inputEmail" class="form-control" placeholder="Email" required="" autofocus=""> <label for="inputEmail">Email</label>
+            <input type="text" id="inputUsername" class="form-control" placeholder="Username" required="" autofocus="" name="username"> <label for="inputUsername">Username</label>
           </div>
         </div><!-- /.form-group -->
         <!-- .form-group -->
         <div class="form-group">
           <div class="form-label-group">
-            <input type="text" id="inputUser" class="form-control" placeholder="Username" required=""> <label for="inputUser">Usuario</label>
+            <input type="email" id="inputEmail" class="form-control" placeholder="Email" required="" autofocus="" name="mail"> <label for="inputEmail">Email</label>
           </div>
         </div><!-- /.form-group -->
         <!-- .form-group -->
         <div class="form-group">
           <div class="form-label-group">
-            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required=""> <label for="inputPassword">Contraseña</label>
+            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="" name="password"> <label for="inputPassword">Contraseña</label>
           </div>
+        </div><!-- /.form-group -->
+        <!-- .form-group -->
+        <div class="form-group">
+          <div class="form-label-group">
+            <input type="text" id="inputNombre" class="form-control" placeholder="Nombre" required="" name="nombre"> <label for="inputNombre">Nombre</label>
+          </div>
+        </div><!-- /.form-group -->
+        <!-- .form-group -->
+        <div class="form-group">
+          <div class="form-label-group">
+            <input type="text" id="inputApellido" class="form-control" placeholder="Apellido" required="" name="apellido"> <label for="inputApellido">Apellido</label>
+          </div>
+        </div><!-- /.form-group -->
+        <!-- .form-group -->
+        <div class="form-group">
+          <div class="form-label-group">
+            <input type="text" id="inputTelefono" class="form-control" placeholder="Telefono" required="" name="telefono"> <label for="inputTelefono">Telefono</label>
+          </div>
+        </div><!-- /.form-group -->
+        <!-- .form-group -->
+        <div class="form-group">
+          <div class="form-label-group">
+            <input type="text" id="inputDireccion" class="form-control" placeholder="Direccion" required="" name="direccion"> <label for="inputDireccion">Direccion</label>
+          </div>
+        </div><!-- /.form-group -->
+        <!-- .form-group -->
+        <div class="form-group">
+          <div class="form-label-group">
+            <input type="text" id="inputTelefonoPadres" class="form-control" placeholder="Telfono Padres" required="" name="telefonoPadres"> <label for="inputTelefonoPadres">Telefono Padre o Tutor</label>
+          </div>
+        </div><!-- /.form-group -->
+        <!-- .form-group -->
+        <div class="form-group">
+            <label class="control-label" for="fechaNacimiento">Fecha Nacimiento</label> <input id="fechaNacimiento" type="text" class="form-control" data-toggle="flatpickr" name="fechaNacimiento">
+        </div><!-- /.form-group -->
+        <!-- .form-group -->
+        <div class="form-group">
+                <label for="sel1"></label><select class="custom-select" id="sel1" required="" name="rango">
+                        <option> Tipo usuario ... </option>
+                        <option value="estudiante" > Estudiante </option>
+                        <option value="tutor" > Tutor </option>
+                </select>
         </div><!-- /.form-group -->
         <!-- .form-group -->
         <div class="form-group">
@@ -113,6 +187,7 @@
       })
     </script> <!-- END PLUGINS JS -->
     <!-- BEGIN THEME JS -->
+    <script src="assets/vendor/flatpickr/flatpickr.min.js"></script>
     <script src="assets/javascript/theme.min.js"></script> <!-- END THEME JS -->
   </body>
 </html>

@@ -1,3 +1,15 @@
+<?php
+    //Iniciamos la session
+    session_start();
+    //Incluir clase usuario
+    include("php/class_usuario.php");
+    //Ver si tenemos session iniciada
+    if(isset($_SESSION["user"])){
+        //Mandar al usuario a la pagina de login
+        header("Location: profile.php");
+        die();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -54,21 +66,44 @@
     <!-- .auth -->
     <main class="auth auth-floated">
       <!-- form -->
-      <form class="auth-form">
+      <form class="auth-form" action="login.php" method="post">
         <div class="mb-4">
           <div class="mb-3">
             <img class="rounded" src="assets/apple-touch-icon.png" alt="" height="72">
           </div>
           <h1 class="h3"> Sign In </h1>
         </div>
+        <?php
+            //Ver si tenemos parametros POST de username y password
+            if(isset($_POST["username"])&&isset($_POST["password"])){
+                //conseguir datos del usuario
+                $newUser= new Usuario(null,null,null,null,null,null,null,null,null,null);
+                if($newUser->fetchUserInfoFromDB($_POST["username"])){
+                    //ver si los datos son correctos
+                    if($newUser->verifyPassword($_POST["password"])){
+                        //Mandar al usuario a la pagina de login
+                        $_SESSION["user"]=$newUser;
+                        header("Location: profile.php");
+                        die();
+                    }
+                    else{
+                        echo '<div class="alert alert-danger" role="alert">Contrasenia incorrecta!</div>';
+                    }
+                }
+                else{
+                    //Desplegar mensaje de error
+                    echo '<div class="alert alert-danger" role="alert">Usuario no encontrado!</div>';
+                }
+            }
+        ?>
         <p class="text-left mb-4"> ¿Eres un usuario nuevo? <a href="register.php">Crear cuenta</a>
         </p><!-- .form-group -->
         <div class="form-group mb-4">
-          <label class="d-block text-left" for="inputUser">Usuario</label> <input type="text" id="inputUser" class="form-control form-control-lg" required="" autofocus="">
+          <label class="d-block text-left" for="inputUser">Usuario</label> <input type="text" id="inputUser" class="form-control form-control-lg" required="" autofocus="" name="username">
         </div><!-- /.form-group -->
         <!-- .form-group -->
         <div class="form-group mb-4">
-          <label class="d-block text-left" for="inputPassword">Contraseña</label> <input type="password" id="inputPassword" class="form-control form-control-lg" required="">
+          <label class="d-block text-left" for="inputPassword">Contraseña</label> <input type="password" id="inputPassword" class="form-control form-control-lg" required="" name="password">
         </div><!-- /.form-group -->
         <!-- .form-group -->
         <div class="form-group mb-4">

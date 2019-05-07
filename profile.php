@@ -1,7 +1,18 @@
+<?php
+  session_start();
+  //Incluir la clase usuario
+  include("php/class_usuario.php");
+  //Ver si tenemos session iniciada
+  if(!isset($_SESSION["user"])){
+    //Mandar al usuario a la pagina de login
+    header("Location: login.php");
+    die();
+  }
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
+    <!-- Required meta tags  -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><!-- End Required meta tags -->
     <!-- Begin SEO tag -->
