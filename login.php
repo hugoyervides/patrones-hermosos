@@ -1,6 +1,8 @@
 <?php
     //Iniciamos la session
     session_start();
+    //Incluir archivo de configuracion MySQL
+    include("php/config.php");
     //Incluir clase usuario
     include("php/class_usuario.php");
     //Ver si tenemos session iniciada

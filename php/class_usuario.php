@@ -1,6 +1,7 @@
 <?php
-    //Incluir archivo de configuracion MySQL
-    include("config.php");
+    //INcluir clases a usar
+    include("class_avisos.php");
+    include("class_sede.php");
     //Declaracion de la clase
     class Usuario{
         //Declaracion de los atributos
@@ -14,8 +15,9 @@
         var $direccion;
         var $fechaNacimiento;
         var $rango;
+        var $sede;
         //Declaracion del constructor con parametros
-        function __construct($username, $nombre, $apellido, $mail, $telefono, $password, $telefonoPadres, $direccion, $fechaNacimiento, $rango ) {
+        function __construct($username, $nombre, $apellido, $mail, $telefono, $password, $telefonoPadres, $direccion, $fechaNacimiento, $rango) {
             //Asignacion a los atributos
             $this->username=$username;
             $this->nombre=$nombre;
@@ -37,6 +39,7 @@
         function getTelefonoPadres(){ return $this->telefonoPadres;}
         function getDireccion(){ return $this->direccion;}
         function getRangoUsuario(){ return $this->rango;}
+        function getSede(){ return $this->sede;}
         //Metodos setters
         function setNombre($newName){ $this->nombre=$newName; }
         function setApellido($apellido){ $this->apellido=$apellido;}
@@ -64,6 +67,10 @@
                     $this->direccion=$row["direccion"];
                     $this->fechaNacimiento=$row["fechaNacimiento"];
                     $this->rango=$row["rango"];
+                    //conseguirel objeto sede para ponerlo en la base de datos
+                    $newSede = new Sede();
+                    $newSede->fetchSedeInfoFromDb($row["sedeID"]);
+                    $this->sede=$newSede;
                     return true;
                 }
                 else{

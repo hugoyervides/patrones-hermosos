@@ -2,13 +2,68 @@
   session_start();
   //Incluir la clase usuario
   include("php/class_usuario.php");
+  //Declaracion de variables
+  $datosPost=array("nombre","apellido","email","direccion","telefono","telefonoPadres");
+  $continue=true;
   //Ver si tenemos session iniciada
   if(!isset($_SESSION["user"])){
     //Mandar al usuario a la pagina de login
     header("Location: login.php");
     die();
   }
+  //Conseguir el usuario de la session
   $myUser=unserialize($_SESSION["user"]);
+  //Ver si tenemos datos post para cambiar la informacion de usuario
+  for($i=0; $i<sizeof($datosPost) ; $i++){
+    //ver si existe el dato POST
+    if(!isset($_POST[$datosPost[$i]])){
+      $continue=false;
+    }
+  }
+  //ver si tenemos los datos post para proceder a cambiar la informacion de usuario
+  if($continue){
+    //actualizar los datos de nuestro usuario
+    $myUser->setNombre($_POST["nombre"]);
+    $myUser->setApellido($_POST["apellido"]);
+    $myUser->setMail($_POST["email"]);
+    $myUser->setDireccion($_POST["direccion"]);
+    $myUser->setTelefono($_POST["telefono"]);
+    $myUser->getTelefonoPadres($_POST["telefonoPadres"]);
+    //Actualizar el usuario en la base de datos
+    $myUser->updateUserDatatoDB();
+    //Actualizamos el usuario de la session
+    $_SESSION["user"]=serialize($myUser);
+  }
+  //Declaracion de las variables para el menu
+  $opcionesAdministrador='
+    <li class="menu-header">Administradores </li>
+    <!-- .menu-item -->
+    <li class="menu-item">
+      <a href="tutores.php" class="menu-link"><span class="menu-icon fas fa-chalkboard-teacher"></span> <span class="menu-text">Tutores</span></a> 
+    </li><!-- /.menu-item -->
+    ';
+  $opcionesAlumnos='                
+    <li class="menu-header">Alumnos </li>
+    <!-- .menu-item -->
+    <li class="menu-item">
+      <a href="avisos.php" class="menu-link"><span class="menu-icon fas fa-exclamation-triangle"></span> <span class="menu-text">Avisos</span></a> 
+    </li><!-- /.menu-item -->
+    <!-- .menu-item -->
+    <li class="menu-item has-active">
+      <a href="sedes.php" class="menu-link"><span class="menu-icon fas fa-chalkboard-teacher"></span> <span class="menu-text">Sedes</span></a> 
+    </li><!-- /.menu-item -->
+    <!-- .menu-item -->
+    <li class="menu-item">
+      <a href="entregables.php" class="menu-link"><span class="menu-icon fas fa-file-upload"></span> <span class="menu-text">Entregables</span></a> 
+    </li><!-- /.menu-item --> 
+  ';
+  $opcionesTutores='
+    <li class="menu-header">Tutores </li>
+    <!-- .menu-item -->
+    <li class="menu-item">
+      <a href="misede.php" class="menu-link"><span class="menu-icon fas fa-chalkboard-teacher"></span> <span class="menu-text">Mi Sede</span></a> 
+    </li><!-- /.menu-item -->
+  ';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -109,13 +164,12 @@
           <!-- .aside-header -->
           <header class="aside-header d-block d-md-none">
             <!-- .btn-account -->
-            <button class="btn-account" type="button" data-toggle="collapse" data-target="#dropdown-aside"><span class="user-avatar user-avatar-lg"><img src="assets/images/avatars/unknown-profile.jpg" alt=""></span> <span class="account-icon"><span class="fa fa-caret-down fa-lg"></span></span> <span class="account-summary"><span class="account-name">Beni Arisandi</span> <span class="account-description">Marketing Manager</span></span></button> <!-- /.btn-account -->
+            <button class="btn-account" type="button" data-toggle="collapse" data-target="#dropdown-aside"><span class="user-avatar user-avatar-lg"><img src="assets/images/avatars/unknown-profile.jpg" alt=""></span> <span class="account-icon"><span class="fa fa-caret-down fa-lg"></span></span> <span class="account-summary"><span class="account-name"><?php echo $myUser->getUserFullName() ?></span> <span class="account-description"><?php echo $myUser->getRangoUsuario() ?></span></span></button> <!-- /.btn-account -->
             <!-- .dropdown-aside -->
             <div id="dropdown-aside" class="dropdown-aside collapse">
               <!-- dropdown-items -->
               <div class="pb-3">
                 <a class="dropdown-item" href="user-profile.html"><span class="dropdown-icon oi oi-person"></span> Profile</a> <a class="dropdown-item" href="auth-signin-v1.html"><span class="dropdown-icon oi oi-account-logout"></span> Logout</a>
-                <div class="dropdown-divider"></div><a class="dropdown-item" href="#!">Help Center</a> <a class="dropdown-item" href="#!">Ask Forum</a> <a class="dropdown-item" href="#!">Keyboard Shortcuts</a>
               </div><!-- /dropdown-items -->
             </div><!-- /.dropdown-aside -->
           </header><!-- /.aside-header -->
@@ -129,18 +183,18 @@
                 <li class="menu-item">
                   <a href="profile.php" class="menu-link"><span class="menu-icon oi oi-person"></span> <span class="menu-text">Mi Cuenta</span></a> 
                 </li><!-- /.menu-item -->
-                <!-- .menu-item -->
-                <li class="menu-item">
-                  <a href="avisos.php" class="menu-link"><span class="menu-icon fas fa-exclamation-triangle"></span> <span class="menu-text">Avisos</span></a> 
-                </li><!-- /.menu-item -->
-                <!-- .menu-item -->
-                <li class="menu-item has-active">
-                  <a href="sedes.php" class="menu-link"><span class="menu-icon fas fa-chalkboard-teacher"></span> <span class="menu-text">Sedes</span></a> 
-                </li><!-- /.menu-item -->
-                <!-- .menu-item -->
-                <li class="menu-item">
-                  <a href="entregables.php" class="menu-link"><span class="menu-icon fas fa-file-upload"></span> <span class="menu-text">Entregables</span></a> 
-                </li><!-- /.menu-item -->
+                <?php
+                  //Si es administrador
+                  if($myUser->getRangoUsuario()=="Administrador"){
+                    echo $opcionesAdministrador;
+                  }
+                  elseif($myUser->getRangoUsuario()=="Alumno"){
+                    echo $opcionesAlumnos;
+                  }
+                  elseif($myUser->getRangoUsuario()=="Tutor"){
+                    echo $opcionesTutores;
+                  }
+                ?>
               </ul><!-- /.menu -->
             </nav><!-- /.stacked-menu -->
           </section><!-- /.aside-menu -->
@@ -156,7 +210,7 @@
         <div class="wrapper">
           <!-- .page -->
           <div class="page">
-
+                  
           </div><!-- /.page -->
         </div><!-- .app-footer -->
         <footer class="app-footer">

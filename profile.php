@@ -1,6 +1,8 @@
 <?php
   session_start();
   //Incluir la clase usuario
+  //Incluir archivo de configuracion MySQL
+  include("php/config.php");
   include("php/class_usuario.php");
   //Declaracion de variables
   $datosPost=array("nombre","apellido","email","direccion","telefono","telefonoPadres");
@@ -39,7 +41,7 @@
     <li class="menu-header">Administradores </li>
     <!-- .menu-item -->
     <li class="menu-item">
-      <a href="entregables.php" class="menu-link"><span class="menu-icon fas fa-file-upload"></span> <span class="menu-text">Tutores</span></a> 
+      <a href="tutores.php" class="menu-link"><span class="menu-icon fas fa-chalkboard-teacher"></span> <span class="menu-text">Tutores</span></a> 
     </li><!-- /.menu-item -->
     ';
   $opcionesAlumnos='                
@@ -61,7 +63,7 @@
     <li class="menu-header">Tutores </li>
     <!-- .menu-item -->
     <li class="menu-item">
-      <a href="entregables.php" class="menu-link"><span class="menu-icon fas fa-file-upload"></span> <span class="menu-text">Mi Sede</span></a> 
+      <a href="misede.php" class="menu-link"><span class="menu-icon fas fa-chalkboard-teacher"></span> <span class="menu-text">Mi Sede</span></a> 
     </li><!-- /.menu-item -->
   ';
 ?>
@@ -215,6 +217,7 @@
                   <a href="user-profile.html" class="user-avatar user-avatar-xl"><img src="assets/images/avatars/unknown-profile.jpg" alt=""></a>
                   <h2 class="h4 mt-2 mb-0"> <?php echo $myUser->getUserFullName() ?> </h2>
                   <p class="text-muted"> <?php echo $myUser->getRangoUsuario() ?> </p>
+                  <?php echo $myUser->getSede()->getNombre(); ?>
                   <p> Configuracion de la cuenta </p>
               </header>
               <div class="col-lg-12 mt-3">
