@@ -2,38 +2,13 @@
   session_start();
   //Incluir la clase usuario
   include("php/class_usuario.php");
-  //Declaracion de variables
-  $datosPost=array("nombre","apellido","email","direccion","telefono","telefonoPadres");
-  $continue=true;
   //Ver si tenemos session iniciada
   if(!isset($_SESSION["user"])){
     //Mandar al usuario a la pagina de login
     header("Location: login.php");
     die();
   }
-  //Conseguir el usuario de la session
   $myUser=unserialize($_SESSION["user"]);
-  //Ver si tenemos datos post para cambiar la informacion de usuario
-  for($i=0; $i<sizeof($datosPost) ; $i++){
-    //ver si existe el dato POST
-    if(!isset($_POST[$datosPost[$i]])){
-      $continue=false;
-    }
-  }
-  //ver si tenemos los datos post para proceder a cambiar la informacion de usuario
-  if($continue){
-    //actualizar los datos de nuestro usuario
-    $myUser->setNombre($_POST["nombre"]);
-    $myUser->setApellido($_POST["apellido"]);
-    $myUser->setMail($_POST["email"]);
-    $myUser->setDireccion($_POST["direccion"]);
-    $myUser->setTelefono($_POST["telefono"]);
-    $myUser->getTelefonoPadres($_POST["telefonoPadres"]);
-    //Actualizar el usuario en la base de datos
-    $myUser->updateUserDatatoDB();
-    //Actualizamos el usuario de la session
-    $_SESSION["user"]=serialize($myUser);
-  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +17,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><!-- End Required meta tags -->
     <!-- Begin SEO tag -->
-    <title> Profile | Patrones Hermosos </title>
+    <title> Avisos | Patrones Hermosos </title>
     <meta property="og:title" content="Profile Settings">
     <meta name="author" content="Beni Arisandi">
     <meta property="og:locale" content="en_US">
@@ -151,12 +126,11 @@
               <!-- .menu -->
               <ul class="menu">
                 <!-- .menu-item -->
-                <li class="menu-item has-active">
+                <li class="menu-item">
                   <a href="profile.php" class="menu-link"><span class="menu-icon oi oi-person"></span> <span class="menu-text">Mi Cuenta</span></a> 
                 </li><!-- /.menu-item -->
-                <li class="menu-header">Alumnos </li>
                 <!-- .menu-item -->
-                <li class="menu-item">
+                <li class="menu-item has-active">
                   <a href="avisos.php" class="menu-link"><span class="menu-icon fas fa-exclamation-triangle"></span> <span class="menu-text">Avisos</span></a> 
                 </li><!-- /.menu-item -->
                 <!-- .menu-item -->
@@ -166,16 +140,6 @@
                 <!-- .menu-item -->
                 <li class="menu-item">
                   <a href="entregables.php" class="menu-link"><span class="menu-icon fas fa-file-upload"></span> <span class="menu-text">Entregables</span></a> 
-                </li><!-- /.menu-item -->
-                <li class="menu-header">Tutores </li>
-                <!-- .menu-item -->
-                <li class="menu-item">
-                  <a href="entregables.php" class="menu-link"><span class="menu-icon fas fa-file-upload"></span> <span class="menu-text">Mi Sede</span></a> 
-                </li><!-- /.menu-item -->
-                <li class="menu-header">Administradores </li>
-                <!-- .menu-item -->
-                <li class="menu-item">
-                  <a href="entregables.php" class="menu-link"><span class="menu-icon fas fa-file-upload"></span> <span class="menu-text">Tutores</span></a> 
                 </li><!-- /.menu-item -->
               </ul><!-- /.menu -->
             </nav><!-- /.stacked-menu -->
@@ -192,59 +156,7 @@
         <div class="wrapper">
           <!-- .page -->
           <div class="page">
-            <header class="page-cover">
-                <div class="text-center">
-                  <a href="user-profile.html" class="user-avatar user-avatar-xl"><img src="assets/images/avatars/unknown-profile.jpg" alt=""></a>
-                  <h2 class="h4 mt-2 mb-0"> <?php echo $myUser->getUserFullName() ?> </h2>
-                  <p class="text-muted"> <?php echo $myUser->getRangoUsuario() ?> </p>
-                  <p> Configuracion de la cuenta </p>
-              </header>
-              <div class="col-lg-12 mt-3">
-                    <!-- .card -->
-                    <div class="card card-fluid">
-                      <h6 class="card-header"> Cuenta </h6><!-- .card-body -->
-                      <div class="card-body">
-                        <!-- form -->
-                        <form method="post" action="profile.php">
-                          <!-- form row -->
-                          <div class="form-row">
-                            <!-- form column -->
-                            <div class="col-md-6 mb-3">
-                              <label for="nombre">Nombre</label> <input type="text" class="form-control" id="nombre" value="<?php echo $myUser->getNombre() ?>" required="" name="nombre">
-                            </div><!-- /form column -->
-                            <!-- form column -->
-                            <div class="col-md-6 mb-3">
-                              <label for="apellido">Apellido</label> <input type="text" class="form-control" id="apellido" value="<?php echo $myUser->getApellido() ?>" required="" name="apellido">
-                            </div><!-- /form column -->
-                          </div><!-- /form row -->
-                          <!-- .form-group -->
-                          <div class="form-group">
-                            <label for="correo">Correo Electronico</label> <input type="email" class="form-control" id="correo" value="<?php echo $myUser->getMail() ?>" required="" name="email">
-                          </div><!-- /.form-group -->
-                          <!-- form row -->
-                          <div class="form-row">
-                            <!-- form column -->
-                            <div class="col-md-6 mb-3">
-                              <label for="telefono">Telefono Personal</label> <input type="text" class="form-control" id="telefono" value="<?php echo $myUser->getTelefono() ?>" required="" name="telefono"> 
-                            </div><!-- /form column -->
-                            <!-- form column -->
-                            <div class="col-md-6 mb-3">
-                              <label for="telefonoPadre">Telefono Padre o Tutor</label> <input type="text" class="form-control" id="telefonoPadre" value="<?php echo $myUser->getTelefonoPadres() ?>" required="" name="telefonoPadres">
-                            </div><!-- /form column -->
-                          </div><!-- /form row -->
-                          <div class="form-group">
-                            <label for="direccion">Direccion</label> <input type="text" class="form-control" id="direccion" value="<?php echo $myUser->getDireccion() ?>" required="" name="direccion">
-                          </div><!-- /.form-group -->
-                          <hr>
-                          <!-- .form-actions -->
-                          <div class="form-actions">
-                            <!-- enable submit btn when user type their current password -->
-                            <button type="submit" class="btn btn-primary">Actualizar Cuenta</button>
-                          </div><!-- /.form-actions -->
-                        </form><!-- /form -->
-                      </div><!-- /.card-body -->
-                    </div><!-- /.card -->
-                  </div>
+
           </div><!-- /.page -->
         </div><!-- .app-footer -->
         <footer class="app-footer">

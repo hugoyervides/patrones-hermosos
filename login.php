@@ -17,7 +17,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><!-- End Required meta tags -->
     <!-- Begin SEO tag -->
-    <title> Sign In | Patrones Hermosos </title>
+    <title> Iniciar Sesion | Patrones Hermosos </title>
     <meta property="og:title" content="Sign In">
     <meta name="author" content="Beni Arisandi">
     <meta property="og:locale" content="en_US">
@@ -82,7 +82,7 @@
                     //ver si los datos son correctos
                     if($newUser->verifyPassword($_POST["password"])){
                         //Mandar al usuario a la pagina de login
-                        $_SESSION["user"]=$newUser;
+                        $_SESSION["user"]=serialize($newUser);
                         header("Location: profile.php");
                         die();
                     }
@@ -117,10 +117,10 @@
         </div><!-- /.form-group -->
         <!-- recovery links -->
         <p class="py-2">
-          <a href="auth-recovery-username.html" class="link">¿Olvidaste tu usuario?</a> <span class="mx-2">·</span> <a href="auth-recovery-password.html" class="link">¿Olvidaste tu contraseña?</a>
+          <a href="404.html" class="link">¿Olvidaste tu usuario?</a> <span class="mx-2">·</span> <a href="404.html" class="link">¿Olvidaste tu contraseña?</a>
         </p><!-- /recovery links -->
         <!-- copyright -->
-        <p class="mb-0 px-3 text-muted text-center"> © 2019 All Rights Reserved.
+        <p class="mb-0 px-3 text-muted text-center"> © 2019 Todos los derechos reservados.
         </p>
       </form><!-- /.auth-form -->
       <!-- .auth-announcement -->

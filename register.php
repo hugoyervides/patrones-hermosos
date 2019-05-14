@@ -8,7 +8,6 @@
     //iterar por los datos post para ver que tengamos todos
     for($i=0; $i<sizeof($datosPOST); $i++){
         if(!isset($_POST[$datosPOST[$i]])){
-            echo "Sin " . $datosPOST[$i];
             $registrar=false;}
     }
     //COntinuar con el registro si tenemos datos POST

@@ -28,6 +28,21 @@
             $this->fechaNacimiento=$fechaNacimiento;
             $this->rango=$rango;
         }
+        //Metodos getters
+        function getUserFullName(){ return $this->nombre." ".$this->apellido;}
+        function getNombre(){ return $this->nombre;}
+        function getApellido(){ return $this->apellido;}
+        function getMail(){ return $this->mail;}
+        function getTelefono(){ return $this->telefono;}
+        function getTelefonoPadres(){ return $this->telefonoPadres;}
+        function getDireccion(){ return $this->direccion;}
+        function getRangoUsuario(){ return $this->rango;}
+        //Metodos setters
+        function setNombre($newName){ $this->nombre=$newName; }
+        function setApellido($apellido){ $this->apellido=$apellido;}
+        function setMail($mail){ $this->mail=$mail;}
+        function setTelefono($telefono){ $this->telefono=$telefono;}
+        function setDireccion($direccion){ $this->direccion=$direccion;}
         //Funcion para obtener la informacion de la base de datos
         function fetchUserInfoFromDB($username){
             //Declaracion de variables
@@ -78,6 +93,20 @@
                 return true;
             }
             return false;
+        }
+        //Metodo que actualiza los datos de usuario en la base de datos
+        function updateUserDatatoDB(){
+            //Declaracion de variables
+            global $conexionMySQL;
+            //preparamos query
+            $query='UPDATE usuario SET nombre="'.$this->nombre.'",apellido="'.$this->apellido.'",email="'.$this->mail.'",telefono="'.$this->telefono.'",password="'.$this->password.'",telefonoPadres="'.$this->telefonoPadres.'",direccion="'.$this->direccion.'",fechaNacimiento="'.$this->fechaNacimiento.'",rango="'.$this->rango.'" WHERE username="'.$this->username.'"';
+            //ejecutamos query
+            if($result=$conexionMySQL->query($query)){
+                return true;
+            }
+            else{
+                return false;
+            }
         }
     }
 ?>
