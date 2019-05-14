@@ -57,11 +57,11 @@
                     $this->username=$row["username"];
                     $this->nombre=$row["nombre"];
                     $this->apellido=$row["apellido"];
-                    $this->email=$row["email"];
+                    $this->mail=$row["email"];
                     $this->telefono=$row["telefono"];
                     $this->password=$row["password"];
                     $this->telefonoPadres=$row["telefonoPadres"];
-                    $this->direccon=$row["direccion"];
+                    $this->direccion=$row["direccion"];
                     $this->fechaNacimiento=$row["fechaNacimiento"];
                     $this->rango=$row["rango"];
                     return true;
