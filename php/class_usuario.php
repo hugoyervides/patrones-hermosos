@@ -16,6 +16,7 @@
         var $fechaNacimiento;
         var $rango;
         var $sede;
+        var $estado;
         //Declaracion del constructor con parametros
         function __construct($username, $nombre, $apellido, $mail, $telefono, $password, $telefonoPadres, $direccion, $fechaNacimiento, $rango) {
             //Asignacion a los atributos
@@ -40,12 +41,15 @@
         function getDireccion(){ return $this->direccion;}
         function getRangoUsuario(){ return $this->rango;}
         function getSede(){ return $this->sede;}
+        function getEstado(){ return $this->estado;}
+        function getUsername(){ return $this->username;}
         //Metodos setters
         function setNombre($newName){ $this->nombre=$newName; }
         function setApellido($apellido){ $this->apellido=$apellido;}
         function setMail($mail){ $this->mail=$mail;}
         function setTelefono($telefono){ $this->telefono=$telefono;}
         function setDireccion($direccion){ $this->direccion=$direccion;}
+        function setEstado($newEstado){ $this->estado=$newEstado;}
         //Funcion para obtener la informacion de la base de datos
         function fetchUserInfoFromDB($username){
             //Declaracion de variables
@@ -67,6 +71,7 @@
                     $this->direccion=$row["direccion"];
                     $this->fechaNacimiento=$row["fechaNacimiento"];
                     $this->rango=$row["rango"];
+                    $this->estado=$row["estado"];
                     //conseguirel objeto sede para ponerlo en la base de datos
                     $newSede = new Sede();
                     $newSede->fetchSedeInfoFromDb($row["sedeID"]);
@@ -124,6 +129,29 @@
             if($result=$conexionMySQL->query($query)){
                 $row=$result->fetch_assoc();
                 return $row["sedeID"];
+            }else{
+                return null;
+            }
+        }
+        //Funcion que arroja toda la lista de usuarios con el filtro de rango
+        function getUsersFilteredByRango($filter){
+            //Declaracion de variables
+            global $conexionMySQL;
+            $returnArray = array();
+            //preparamos el query
+            $query='SELECT username FROM usuario WHERE rango="'.$filter.'"';
+            //hacemos query
+            if($result=$conexionMySQL->query($query)){
+                //navegar por los resultados
+                while($row=$result->fetch_assoc()){
+                    //metemos el resultado en nuestro arreglo
+                    $newUsuario =  new Usuario(null,null,null,null,null,null,null,null,null,null);
+                    $newUsuario->fetchUserInfoFromDB($row["username"]);
+                    //metemos el nuevo usuario al arreglo de retorno
+                    array_push($returnArray,$newUsuario);
+                }
+                //Regresamos el resultado
+                return $returnArray;
             }else{
                 return null;
             }

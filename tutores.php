@@ -1,12 +1,9 @@
 <?php
   session_start();
-  //Incluir la clase usuario
-  //Incluir archivo de configuracion MySQL
+  //INlcuir la configuracion de base de datos
   include("php/config.php");
+  //Incluir la clase usuario
   include("php/class_usuario.php");
-  //Declaracion de variables
-  $datosPost=array("nombre","apellido","email","direccion","telefono","telefonoPadres");
-  $continue=true;
   //Ver si tenemos session iniciada
   if(!isset($_SESSION["user"])){
     //Mandar al usuario a la pagina de login
@@ -15,32 +12,11 @@
   }
   //Conseguir el usuario de la session
   $myUser=unserialize($_SESSION["user"]);
-  //Ver si tenemos datos post para cambiar la informacion de usuario
-  for($i=0; $i<sizeof($datosPost) ; $i++){
-    //ver si existe el dato POST
-    if(!isset($_POST[$datosPost[$i]])){
-      $continue=false;
-    }
-  }
-  //ver si tenemos los datos post para proceder a cambiar la informacion de usuario
-  if($continue){
-    //actualizar los datos de nuestro usuario
-    $myUser->setNombre($_POST["nombre"]);
-    $myUser->setApellido($_POST["apellido"]);
-    $myUser->setMail($_POST["email"]);
-    $myUser->setDireccion($_POST["direccion"]);
-    $myUser->setTelefono($_POST["telefono"]);
-    $myUser->getTelefonoPadres($_POST["telefonoPadres"]);
-    //Actualizar el usuario en la base de datos
-    $myUser->updateUserDatatoDB();
-    //Actualizamos el usuario de la session
-    $_SESSION["user"]=serialize($myUser);
-  }
   //Declaracion de las variables para el menu
   $opcionesAdministrador='
     <li class="menu-header">Administradores </li>
     <!-- .menu-item -->
-    <li class="menu-item">
+    <li class="menu-item has-active">
       <a href="tutores.php" class="menu-link"><span class="menu-icon fas fa-chalkboard-teacher"></span> <span class="menu-text">Tutores</span></a> 
     </li><!-- /.menu-item -->
     ';
@@ -74,7 +50,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><!-- End Required meta tags -->
     <!-- Begin SEO tag -->
-    <title> Profile | Patrones Hermosos </title>
+    <title> Tutores | Patrones Hermosos </title>
     <meta property="og:title" content="Profile Settings">
     <meta name="author" content="Beni Arisandi">
     <meta property="og:locale" content="en_US">
@@ -182,7 +158,7 @@
               <!-- .menu -->
               <ul class="menu">
                 <!-- .menu-item -->
-                <li class="menu-item has-active">
+                <li class="menu-item">
                   <a href="profile.php" class="menu-link"><span class="menu-icon oi oi-person"></span> <span class="menu-text">Mi Cuenta</span></a> 
                 </li><!-- /.menu-item -->
                 <?php
@@ -194,10 +170,7 @@
                     echo $opcionesAlumnos;
                   }
                   elseif($myUser->getRangoUsuario()=="Tutor"){
-                                        //ver si es tutor
-                                        if($myUser->getEstado()=="Aceptado"){
-                                          echo $opcionesTutores;
-                                        }
+                    echo $opcionesTutores;
                   }
                 ?>
               </ul><!-- /.menu -->
@@ -215,60 +188,138 @@
         <div class="wrapper">
           <!-- .page -->
           <div class="page">
-            <header class="page-cover">
-                <div class="text-center">
-                  <a href="user-profile.html" class="user-avatar user-avatar-xl"><img src="assets/images/avatars/unknown-profile.jpg" alt=""></a>
-                  <h2 class="h4 mt-2 mb-0"> <?php echo $myUser->getUserFullName() ?> </h2>
-                  <p class="text-muted"> <?php echo $myUser->getRangoUsuario() ?> </p>
-                  <?php echo $myUser->getSede()->getNombre(); ?>
-                  <p> Configuracion de la cuenta </p>
-              </header>
-              <div class="col-lg-12 mt-3">
+          <div class="tab-content pt-4 m-4" id="clientDetailsTabs">
+                  <!-- .tab-pane -->
+                  <div class="tab-pane fade" id="client-billing-contact" role="tabpanel" aria-labelledby="client-billing-contact-tab">
                     <!-- .card -->
-                    <div class="card card-fluid">
-                      <h6 class="card-header"> Cuenta </h6><!-- .card-body -->
+                    <section class="card">
+                      <!-- .card-body -->
                       <div class="card-body">
-                        <!-- form -->
-                        <form method="post" action="profile.php">
-                          <!-- form row -->
-                          <div class="form-row">
-                            <!-- form column -->
-                            <div class="col-md-6 mb-3">
-                              <label for="nombre">Nombre</label> <input type="text" class="form-control" id="nombre" value="<?php echo $myUser->getNombre() ?>" required="" name="nombre">
-                            </div><!-- /form column -->
-                            <!-- form column -->
-                            <div class="col-md-6 mb-3">
-                              <label for="apellido">Apellido</label> <input type="text" class="form-control" id="apellido" value="<?php echo $myUser->getApellido() ?>" required="" name="apellido">
-                            </div><!-- /form column -->
-                          </div><!-- /form row -->
-                          <!-- .form-group -->
-                          <div class="form-group">
-                            <label for="correo">Correo Electronico</label> <input type="email" class="form-control" id="correo" value="<?php echo $myUser->getMail() ?>" required="" name="email">
-                          </div><!-- /.form-group -->
-                          <!-- form row -->
-                          <div class="form-row">
-                            <!-- form column -->
-                            <div class="col-md-6 mb-3">
-                              <label for="telefono">Telefono Personal</label> <input type="text" class="form-control" id="telefono" value="<?php echo $myUser->getTelefono() ?>" required="" name="telefono"> 
-                            </div><!-- /form column -->
-                            <!-- form column -->
-                            <div class="col-md-6 mb-3">
-                              <label for="telefonoPadre">Telefono Padre o Tutor</label> <input type="text" class="form-control" id="telefonoPadre" value="<?php echo $myUser->getTelefonoPadres() ?>" required="" name="telefonoPadres">
-                            </div><!-- /form column -->
-                          </div><!-- /form row -->
-                          <div class="form-group">
-                            <label for="direccion">Direccion</label> <input type="text" class="form-control" id="direccion" value="<?php echo $myUser->getDireccion() ?>" required="" name="direccion">
-                          </div><!-- /.form-group -->
-                          <hr>
-                          <!-- .form-actions -->
-                          <div class="form-actions">
-                            <!-- enable submit btn when user type their current password -->
-                            <button type="submit" class="btn btn-primary">Actualizar Cuenta</button>
-                          </div><!-- /.form-actions -->
-                        </form><!-- /form -->
+                        <div class="d-flex justify-content-between align-items-center">
+                          <h2 class="card-title"> Billing Address </h2><button type="button" class="btn btn-link" data-toggle="modal" data-target="#clientBillingEditModal">Edit</button>
+                        </div>
+                        <address> 280 Suzanne Throughway, Breannabury<br> San Francisco, 45801<br> United States </address>
                       </div><!-- /.card-body -->
-                    </div><!-- /.card -->
-                  </div>
+                    </section><!-- /.card -->
+                    <!-- .card -->
+                    <section class="card mt-4">
+                      <!-- .card-body -->
+                      <div class="card-body">
+                        <h2 class="card-title"> Contacts </h2><!-- .table-responsive -->
+                        <div class="table-responsive">
+                          <table class="table table-hover" style="min-width: 678px">
+                            <thead>
+                              <tr>
+                                <th> Name </th>
+                                <th> Email </th>
+                                <th> Phone </th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td class="align-middle"> Alexane Collins </td>
+                                <td class="align-middle"> fhauck@gmail.com </td>
+                                <td class="align-middle"> (062) 109-9222 </td>
+                                <td class="align-middle text-right">
+                                  <button type="button" class="btn btn-sm btn-icon btn-secondary" data-toggle="modal" data-target="#clientContactEditModal"><i class="fa fa-pencil-alt"></i> <span class="sr-only">Edit</span></button> <button type="button" class="btn btn-sm btn-icon btn-secondary"><i class="far fa-trash-alt"></i> <span class="sr-only">Remove</span></button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div><!-- /.table-responsive -->
+                      </div><!-- /.card-body -->
+                      <!-- .card-footer -->
+                      <div class="card-footer">
+                        <a href="#clientContactNewModal" class="card-footer-item" data-toggle="modal"><i class="fa fa-plus-circle mr-1"></i> Add contact</a>
+                      </div><!-- /.card-footer -->
+                    </section><!-- /.card -->
+                  </div><!-- /.tab-pane -->
+                  <!-- .tab-pane -->
+                  <div class="tab-pane fade" id="client-tasks" role="tabpanel" aria-labelledby="client-tasks-tab">
+                    <!-- .card -->
+                    <section class="card">
+                      <!-- .card-body -->
+                      <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                          <h3 class="card-title"> To do </h3>
+                          <div class="card-title-control">
+                            <div class="dropdown">
+                              <button type="button" class="btn btn-icon btn-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>
+                              <div class="dropdown-arrow"></div>
+                              <div class="dropdown-menu dropdown-menu-right">
+                                <h6 class="dropdown-header"> Sort by </h6><label class="custom-control custom-radio stop-propagation"><input type="radio" class="custom-control-input" name="todoSorting" value="0" checked=""> <span class="custom-control-label">My order</span></label> <label class="custom-control custom-radio stop-propagation"><input type="radio" class="custom-control-input" name="todoSorting" value="1"> <span class="custom-control-label">Due date</span></label>
+                                <div class="dropdown-divider"></div><button type="button" class="dropdown-item">Rename list</button> <button type="button" class="dropdown-item">Delete completed todos</button>
+                              </div>
+                            </div>
+                          </div>
+                      </div><!-- /.card-body -->
+                      <!-- .card-footer -->
+                      <div class="card-footer">
+                        <a href="#!" class="card-footer-item"><i class="fa fa-plus-circle mr-1"></i> Add todo</a>
+                      </div><!-- /.card-footer -->
+                    </section><!-- /.card -->
+                  </div><!-- /.tab-pane -->
+                  <!-- .tab-pane -->
+                  <div class="tab-pane fade active show" id="client-projects" role="tabpanel" aria-labelledby="client-projects-tab">
+                    <!-- .card -->
+                    <section class="card">
+                      <!-- .card-header -->
+                      <header class="card-header d-flex">
+                      </header><!-- /.card-header -->
+                      <!-- .table-responsive -->
+                      <div class="table-responsive">
+                        <!-- .table -->
+                        <table class="table">
+                          <!-- thead -->
+                          <thead>
+                            <tr>
+                              <th style="min-width:260px"> Tutor </th>
+                              <th> Email </th>
+                              <th> Telefono </th>
+                              <th> Status </th>
+                              <th></th>
+                            </tr>
+                          </thead><!-- /thead -->
+                          <!-- tbody -->
+                          <tbody>
+                            <?php
+                                //Conseguir la lista de tutores
+                                $arrayTutores=Usuario::getUsersFilteredByRango("Tutor");
+                                //Ciclo for para despelgar todos los tutores
+                                for($i=0; $i < sizeof($arrayTutores) ; $i++){
+                                    //Despelgar el dato
+                                    echo '
+                                        <!-- tr -->
+                                        <tr>
+                                        <td class="align-middle text-truncate">
+                                            <a href="#!" class="tile bg-pink text-white mr-2"'.($arrayTutores[$i]->getUserFullName())[1].'</a> <a href="#!">'.$arrayTutores[$i]->getUserFullName().'</a>
+                                        </td>
+                                        <td class="align-middle"> '.$arrayTutores[$i]->getMail().' </td>
+                                        <td class="align-middle"> '.$arrayTutores[$i]->getTelefono().' </td>
+                                        <td class="align-middle">
+                                            <span class="badge badge-warning">'.$arrayTutores[$i]->getEstado().'</span>
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            <div class="dropdown">
+                                            <button type="button" class="btn btn-sm btn-icon btn-secondary" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true"><i class="fa fa-ellipsis-h"></i> <span class="sr-only">Actions</span></button>
+                                            <div class="dropdown-arrow"></div>
+                                            <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: top, left; top: 29px; left: 47px;">
+                                                <a href="php/aceptar.php?username='.$arrayTutores[$i]->getUsername().'"><button class="dropdown-item" type="button" >Aceptar</button> </a>
+                                                <a href="php/rechazar.php?username='.$arrayTutores[$i]->getUsername().'"><button class="dropdown-item" type="button">Rechazar</button> </a>
+                                            </div>
+                                            </div>
+                                        </td>
+                                        </tr><!-- /tr -->
+                                    ';
+                                }
+                            ?>
+                          </tbody><!-- /tbody -->
+                        </table><!-- /.table -->
+                      </div><!-- /.table-responsive -->
+                    </section><!-- /.card -->
+                  </div><!-- /.tab-pane -->
+                </div>
           </div><!-- /.page -->
         </div><!-- .app-footer -->
         <footer class="app-footer">
