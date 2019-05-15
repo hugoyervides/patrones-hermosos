@@ -1,5 +1,6 @@
 <?php
     //Incluir clase usuario
+    include("php/config.php");
     include("php/class_usuario.php");
     //Ver si tenemos datos POST para crear la cuenta
     $datosPOST=array("username","nombre","apellido","mail","telefono","password","telefonoPadres","direccion","fechaNacimiento","rango");
