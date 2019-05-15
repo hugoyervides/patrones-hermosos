@@ -1,9 +1,11 @@
 <?php
   session_start();
   //Incluir la clase usuario
+  //Incluir archivo de configuracion MySQL
+  include("php/config.php");
   include("php/class_usuario.php");
   //Declaracion de variables
-  $datosPost=array("nombre","apellido","email","direccion","telefono","telefonoPadres");
+  $datosPost=array("titulo","aviso");
   $continue=true;
   //Ver si tenemos session iniciada
   if(!isset($_SESSION["user"])){
@@ -13,6 +15,9 @@
   }
   //Conseguir el usuario de la session
   $myUser=unserialize($_SESSION["user"]);
+  //Conseguimos la sede que administra
+  $sedeAdministrada = new Sede();
+  $sedeAdministrada->fetchSedeInfoFromDb($myUser->getManagedSede());
   //Ver si tenemos datos post para cambiar la informacion de usuario
   for($i=0; $i<sizeof($datosPost) ; $i++){
     //ver si existe el dato POST
@@ -20,19 +25,12 @@
       $continue=false;
     }
   }
-  //ver si tenemos los datos post para proceder a cambiar la informacion de usuario
+  //ver si tenemos los datos para entonces subir un aviso al servidor
   if($continue){
-    //actualizar los datos de nuestro usuario
-    $myUser->setNombre($_POST["nombre"]);
-    $myUser->setApellido($_POST["apellido"]);
-    $myUser->setMail($_POST["email"]);
-    $myUser->setDireccion($_POST["direccion"]);
-    $myUser->setTelefono($_POST["telefono"]);
-    $myUser->getTelefonoPadres($_POST["telefonoPadres"]);
-    //Actualizar el usuario en la base de datos
-    $myUser->updateUserDatatoDB();
-    //Actualizamos el usuario de la session
-    $_SESSION["user"]=serialize($myUser);
+    //Hacer el anuncio
+    $nuevoAviso= new Avisos($_POST["titulo"],$_POST["aviso"]);
+    //metemos el nuevo aviso a la base de datos
+    $sedeAdministrada->addAviso($nuevoAviso);
   }
   //Declaracion de las variables para el menu
   $opcionesAdministrador='
@@ -45,7 +43,7 @@
   $opcionesAlumnos='                
     <li class="menu-header">Alumnos </li>
     <!-- .menu-item -->
-    <li class="menu-item has-active">
+    <li class="menu-item">
       <a href="avisos.php" class="menu-link"><span class="menu-icon fas fa-exclamation-triangle"></span> <span class="menu-text">Avisos</span></a> 
     </li><!-- /.menu-item -->
     <!-- .menu-item -->
@@ -60,7 +58,7 @@
   $opcionesTutores='
     <li class="menu-header">Tutores </li>
     <!-- .menu-item -->
-    <li class="menu-item">
+    <li class="menu-item has-active">
       <a href="misede.php" class="menu-link"><span class="menu-icon fas fa-chalkboard-teacher"></span> <span class="menu-text">Mi Sede</span></a> 
     </li><!-- /.menu-item -->
   ';
@@ -72,7 +70,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><!-- End Required meta tags -->
     <!-- Begin SEO tag -->
-    <title> Avisos | Patrones Hermosos </title>
+    <title> Mi Sede | Patrones Hermosos </title>
     <meta property="og:title" content="Profile Settings">
     <meta name="author" content="Beni Arisandi">
     <meta property="og:locale" content="en_US">
@@ -210,27 +208,84 @@
         <div class="wrapper">
           <!-- .page -->
           <div class="page">
-            <?php
-                //Ciclo for para iterar por el arreglo
-                $arrayAvisos=$myUser->getSede()->getAvisos();
-                //ciclo for para iterar por los avisos
-                for($i = 0 ; $i < sizeof($arrayAvisos) ; $i++){
-                    //Despelgar
-                    echo '
-                    <section class="card m-3">
-                        <!-- .card-body -->
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h2 class="card-title">'.$arrayAvisos[$i]->getTitulo().' </h2>
-                            </div>
-                            '.$arrayAvisos[$i]->getAviso().'
-                        </div><!-- /.card-body -->
-                    </section>
-                    ';
-                }
-            ?>
+          <div class="sidebar-section">
+                <nav class="d-xl-none" aria-label="breadcrumb">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item active">
+                      <a href="#!" data-toggle="sidebar"><i class="breadcrumb-icon fa fa-angle-left mr-2"></i>Clients</a>
+                    </li>
+                  </ol>
+                </nav>
+                <h1 class="page-title">
+                  <i class="far fa-building text-muted mr-2"></i> <?php echo $sedeAdministrada->getNombre()?> </h1>
+                <p class="text-muted"> <?php echo $sedeAdministrada->getUbicacion()?> </p><!-- .nav-scroller -->
+                <div class="nav-scroller border-bottom">
+                  <!-- .nav-tabs -->
+                  <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                      <a class="nav-link active show" data-toggle="tab" href="">Anuncios</a>
+                    </li>
+                  </ul><!-- /.nav-tabs -->
+                </div><!-- /.nav-scroller -->
+                <!-- .tab-content -->
+                <div class="tab-content pt-4" id="clientDetailsTabs">
+                  <!-- .tab-pane -->
+                  <div class="tab-pane fade active show" id="client-billing-contact" role="tabpanel" aria-labelledby="client-billing-contact-tab">
+                  <?php
+                      //Ciclo for para iterar por el arreglo
+                      $arrayAvisos=$sedeAdministrada->getAvisos();
+                      //ciclo for para iterar por los avisos
+                      for($i = 0 ; $i < sizeof($arrayAvisos) ; $i++){
+                          //Despelgar
+                          echo '
+                          <section class="card">
+                              <!-- .card-body -->
+                              <div class="card-body">
+                                  <div class="d-flex justify-content-between align-items-center">
+                                      <h2 class="card-title">'.$arrayAvisos[$i]->getTitulo().' </h2>
+                                  </div>
+                                  '.$arrayAvisos[$i]->getAviso().'
+                              </div><!-- /.card-body -->
+                          </section>
+                          ';
+                      }
+                  ?>
+                </div><!-- /.tab-content -->
+              </div>
+              <a href="#clientContactNewModal" data-toggle="modal"><button href="#clientContactNewModal" type="button" class="btn btn-primary">Nuevo Aviso</button></a>
+              
           </div><!-- /.page -->
         </div><!-- .app-footer -->
+                <!-- .modal -->
+                <form id="clientContactNewForm" name="clientContactNewForm" method="POST" action="misede.php">
+              <div class="modal fade" id="clientContactNewModal" tabindex="-1" role="dialog" aria-labelledby="clientContactNewModalLabel" aria-hidden="true">
+                <!-- .modal-dialog -->
+                <div class="modal-dialog" role="document">
+                  <!-- .modal-content -->
+                  <div class="modal-content">
+                    <!-- .modal-header -->
+                    <div class="modal-header">
+                      <h6 class="modal-title inline-editable">
+                        <input type="text" class="form-control form-control-lg" placeholder="Titulo Anuncio" required="" name="titulo">
+                      </h6>
+                    </div><!-- /.modal-header -->
+                    <!-- .modal-body -->
+                    <div class="modal-body">
+                      <!-- .form-group -->
+                      <div class="form-group">
+                        <div class="form-label-group">
+                          <input type="text" id="aviso" class="form-control" placeholder="Aviso" required="" name="aviso"> <label for="aviso">Aviso</label>
+                        </div>
+                      </div><!-- /.form-group -->
+                    </div><!-- /.modal-body -->
+                    <!-- .modal-footer -->
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary">Save</button> <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                    </div><!-- /.modal-footer -->
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div>
+            </form><!-- /.modal -->
         <footer class="app-footer">
           <ul class="list-inline">
             <li class="list-inline-item">

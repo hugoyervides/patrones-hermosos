@@ -12,6 +12,7 @@
         //Geters
         function getNombre(){ return $this->nombre;}
         function getAvisos(){ return $this->avisos;}
+        function getUbicacion(){ return $this->ubicacion;}
         //Declaracion de los metodos especiales
         function fetchSedeInfoFromDb($sedeID){
             //Declaracion de variables
@@ -35,6 +36,18 @@
                     $this->avisos= Avisos::getAvisosForSede($this->sedeID);
                 }
                 return false;
+            }else{
+                return false;
+            }
+        }
+        function addAviso($newAviso){
+            //Declaracion de variables
+            global $conexionMySQL;
+            //preparamos query para inserta
+            $query='INSERT INTO avisos(sedeID, titulo, aviso) VALUES ("'.$this->sedeID.'","'.$newAviso->getTitulo().'","'.$newAviso->getAviso().'") ';
+            //Hacemos query
+            if($result=$conexionMySQL->query($query)){
+                return true;
             }else{
                 return false;
             }

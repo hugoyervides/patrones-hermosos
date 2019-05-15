@@ -7,14 +7,14 @@
         //Declaracion del constructor default
         function __construct($titulo, $aviso){
             $this->titulo=$titulo;
-            $this->aviso=$titulo;
+            $this->aviso=$aviso;
         }
         //Declaracion de los geters
         function getTitulo(){ return $this->titulo;}
         function getAviso(){ return $this->aviso; }
         //Declaracion de los setters
-        function setTitulo(){ return $this->titulo;}
-        function setAviso(){ return $this->aviso;}
+        function setTitulo($titulo){ $this->titulo=$titulo;}
+        function setAviso($aviso){ return $this->aviso=$aviso;}
         //Declaracion de metodos especiales
         function getAvisosForSede($sedeID){
             //Declaracion de variables
