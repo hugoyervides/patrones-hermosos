@@ -149,8 +149,8 @@
         <div class="form-group">
                 <label for="sel1"></label><select class="custom-select" id="sel1" required="" name="rango">
                         <option> Tipo usuario ... </option>
-                        <option value="estudiante" > Estudiante </option>
-                        <option value="tutor" > Tutor </option>
+                        <option value="Alumno" > Estudiante </option>
+                        <option value="Tutor" > Tutor </option>
                 </select>
         </div><!-- /.form-group -->
         <!-- .form-group -->
