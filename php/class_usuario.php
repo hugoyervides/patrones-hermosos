@@ -115,5 +115,18 @@
                 return false;
             }
         }
+        //Funcion para obtenr la sede que administra el usuario
+        function getManagedSede(){
+            //Declaracion de variables
+            global $conexionMySQL;
+            $query='SELECT S.sedeID FROM sede S JOIN usuario O ON S.instructora=O.username WHERE username="'. $this->username .'"';
+            //ver si tenemos resultado
+            if($result=$conexionMySQL->query($query)){
+                $row=$result->fetch_assoc();
+                return $row["sedeID"];
+            }else{
+                return null;
+            }
+        }
     }
 ?>
